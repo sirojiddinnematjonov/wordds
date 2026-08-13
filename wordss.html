@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocabulary Trainer</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --secondary: #334155;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; padding: 20px; }
+    .container { width: 100%; max-width: 600px; }
+    
+    header { text-align: center; margin-bottom: 24px; }
+    h1 { font-size: 1.8rem; margin-bottom: 8px; color: #fff; }
+    p.subtitle { color: var(--muted); font-size: 0.95rem; }
+
+    .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+    .tab-btn { flex: 1; padding: 12px; border: none; background: var(--card-bg); color: var(--muted); font-weight: 600; cursor: pointer; border-radius: 8px; transition: all 0.2s; }
+    .tab-btn.active { background: var(--accent); color: white; }
+
+    .card { background: var(--card-bg); padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin-bottom: 20px; }
+    
+    .form-group { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+    input, textarea { width: 100%; padding: 12px; border: 1px solid #334155; background: #0f172a; color: white; border-radius: 8px; font-size: 1rem; }
+    input:focus, textarea:focus { outline: 2px solid var(--accent); }
+
+    .btn { width: 100%; padding: 12px; border: none; background: var(--accent); color: white; font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .btn:hover { background: var(--accent-hover); }
+    
+    .btn-secondary { background: var(--secondary); margin-top: 8px; }
+    .btn-secondary:hover { background: #475569; }
+
+    .sync-actions { display: flex; gap: 10px; margin-top: 10px; }
+
+    .word-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #334155; }
+    .word-item:last-child { border-bottom: none; }
+    .word-term { font-weight: bold; font-size: 1.1rem; }
+    .word-def { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+    .delete-btn { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; padding: 4px 8px; }
+
+    .quiz-card { text-align: center; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; user-select: none; border: 2px dashed #334155; }
+    .quiz-card:hover { border-color: var(--accent); }
+    .prompt-label { font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 12px; }
+    .quiz-term { font-size: 2rem; font-weight: bold; margin-bottom: 12px; }
+    .quiz-def { font-size: 1.2rem; color: var(--muted); display: none; margin-top: 10px; }
+    
+    .quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .btn-correct { background: var(--success); }
+    .btn-wrong { background: var(--danger); }
+    
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Vocabulary Trainer</h1>
+    <p class="subtitle">Enter words, save them, and practice on any device!</p>
+  </header>
+
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('manage')">Manage Words</button>
+    <button class="tab-btn" onclick="switchTab('quiz')">Test Me!</button>
+  </div>
+
+  <!-- MANAGE TAB -->
+  <div id="manageTab">
+    <div class="card">
+      <div class="form-group">
+        <label for="wordInput">Word / Phrase</label>
+        <input type="text" id="wordInput" placeholder="e.g., Ephemeral">
+      </div>
+      <div class="form-group">
+        <label for="meaningInput">Meaning / Definition</label>
+        <textarea id="meaningInput" rows="2" placeholder="e.g., Lasting for a very short time."></textarea>
+      </div>
+      <button class="btn" onclick="addWord()">Add Word</button>
+
+      <!-- EXPORT / IMPORT SECTION -->
+      <div style="margin-top: 20px; border-top: 1px solid #334155; padding-top: 16px;">
+        <label>Transfer Words to iPhone</label>
+        <div class="sync-actions">
+          <button class="btn btn-secondary" onclick="exportWords()">📥 Export File</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import File</button>
+        </div>
+        <input type="file" id="importFile" class="hidden" accept=".json" onchange="importWords(event)">
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom: 12px;">Saved Words (<span id="wordCount">0</span>)</h3>
+      <div id="wordList"></div>
+    </div>
+  </div>
+
+  <!-- QUIZ TAB -->
+  <div id="quizTab" class="hidden">
+    <div id="quizContainer">
+      <div class="card quiz-card" onclick="toggleAnswer()">
+        <span class="prompt-label" id="cardState">Click to reveal definition</span>
+        <div class="quiz-term" id="quizTerm">No words added yet!</div>
+        <div class="quiz-def" id="quizDef">Add or import words first.</div>
+      </div>
+
+      <div class="quiz-actions hidden" id="quizControls">
+        <button class="btn btn-wrong" onclick="nextCard(false)">Needs Practice ❌</button>
+        <button class="btn btn-correct" onclick="nextCard(true)">Got it! ✅</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let words = JSON.parse(localStorage.getItem('user_vocab')) || [];
+  let currentWordIndex = -1;
+  let isAnswerVisible = false;
+
+  function saveAndRender() {
+    localStorage.setItem('user_vocab', JSON.stringify(words));
+    renderWordList();
+  }
+
+  function addWord() {
+    const term = document.getElementById('wordInput').value.trim();
+    const meaning = document.getElementById('meaningInput').value.trim();
+
+    if (!term || !meaning) {
+      alert("Please enter both a word and its meaning!");
+      return;
+    }
+
+    words.push({ id: Date.now(), term, meaning });
+    document.getElementById('wordInput').value = '';
+    document.getElementById('meaningInput').value = '';
+    saveAndRender();
+  }
+
+  function deleteWord(id) {
+    words = words.filter(w => w.id !== id);
+    saveAndRender();
+  }
+
+  function renderWordList() {
+    const listEl = document.getElementById('wordList');
+    document.getElementById('wordCount').textContent = words.length;
+
+    if (words.length === 0) {
+      listEl.innerHTML = '<p style="color: var(--muted); text-align:center;">No words saved yet.</p>';
+      return;
+    }
+
+    listEl.innerHTML = words.map(w => `
+      <div class="word-item">
+        <div>
+          <div class="word-term">${w.term}</div>
+          <div class="word-def">${w.meaning}</div>
+        </div>
+        <button class="delete-btn" onclick="deleteWord(${w.id})" title="Delete">&times;</button>
+      </div>
+    `).join('');
+  }
+
+  // EXPORT WORDS TO FILE
+  function exportWords() {
+    if (words.length === 0) {
+      alert("No words to export!");
+      return;
+    }
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(words));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", "my_vocab_words.json");
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  }
+
+  // IMPORT WORDS FROM FILE
+  function importWords(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        if (Array.isArray(importedData)) {
+          words = importedData;
+          saveAndRender();
+          alert("Successfully imported " + words.length + " words!");
+        } else {
+          alert("Invalid file format.");
+        }
+      } catch (err) {
+        alert("Failed to read file.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function switchTab(tab) {
+    const manageTab = document.getElementById('manageTab');
+    const quizTab = document.getElementById('quizTab');
+    const btns = document.querySelectorAll('.tab-btn');
+
+    if (tab === 'manage') {
+      manageTab.classList.remove('hidden');
+      quizTab.classList.add('hidden');
+      btns[0].classList.add('active');
+      btns[1].classList.remove('active');
+    } else {
+      manageTab.classList.add('hidden');
+      quizTab.classList.remove('hidden');
+      btns[0].classList.remove('active');
+      btns[1].classList.add('active');
+      startQuiz();
+    }
+  }
+
+  function startQuiz() {
+    if (words.length === 0) {
+      document.getElementById('quizTerm').textContent = "No words added yet!";
+      document.getElementById('quizDef').textContent = "Add or import words first.";
+      document.getElementById('cardState').style.display = 'none';
+      document.getElementById('quizControls').classList.add('hidden');
+      return;
+    }
+    currentWordIndex = Math.floor(Math.random() * words.length);
+    showCard();
+  }
+
+  function showCard() {
+    isAnswerVisible = false;
+    const current = words[currentWordIndex];
+    document.getElementById('cardState').style.display = 'block';
+    document.getElementById('cardState').textContent = 'Click to reveal definition';
+    document.getElementById('quizTerm').textContent = current.term;
+    document.getElementById('quizDef').textContent = current.meaning;
+    document.getElementById('quizDef').style.display = 'none';
+    document.getElementById('quizControls').classList.add('hidden');
+  }
+
+  function toggleAnswer() {
+    if (words.length === 0) return;
+    isAnswerVisible = !isAnswerVisible;
+    const defEl = document.getElementById('quizDef');
+    const stateEl = document.getElementById('cardState');
+    const controlsEl = document.getElementById('quizControls');
+
+    if (isAnswerVisible) {
+      defEl.style.display = 'block';
+      stateEl.textContent = 'Definition:';
+      controlsEl.classList.remove('hidden');
+    } else {
+      defEl.style.display = 'none';
+      stateEl.textContent = 'Click to reveal definition';
+      controlsEl.classList.add('hidden');
+    }
+  }
+
+  function nextCard(success) {
+    startQuiz();
+  }
+
+  renderWordList();
+</script>
+</body>
+</html>
