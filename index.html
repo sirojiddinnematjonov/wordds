@@ -3,94 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vocabulary Trainer Pro</title>
+  <title>Lexicon Pro — Vocabulary Builder</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
+      --bg: #090d16;
+      --card-bg: #131c2e;
+      --card-border: #1e2d4a;
       --accent: #6366f1;
       --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.25);
       --text: #f8fafc;
       --muted: #94a3b8;
-      --success: #22c55e;
+      --success: #10b981;
       --danger: #ef4444;
-      --secondary: #334155;
+      --warning: #f59e0b;
+      --secondary: #1e293b;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; padding: 20px; }
-    .container { width: 100%; max-width: 600px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; padding: 20px 16px; -webkit-font-smoothing: antialiased; }
+    .container { width: 100%; max-width: 580px; }
     
-    header { text-align: center; margin-bottom: 16px; }
-    h1 { font-size: 1.8rem; margin-bottom: 4px; color: #fff; }
-    p.subtitle { color: var(--muted); font-size: 0.9rem; }
+    header { text-align: center; margin-bottom: 20px; }
+    .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; }
+    p.subtitle { color: var(--muted); font-size: 0.85rem; font-weight: 500; }
 
-    /* STREAK & BAR */
-    .stats-bar { display: flex; justify-content: space-between; background: var(--card-bg); padding: 10px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 0.9rem; font-weight: 600; border: 1px solid #334155; }
-    .streak { color: #f59e0b; }
+    /* STREAK & PROGRESS STATS */
+    .stats-bar { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 12px 18px; border-radius: 14px; margin-bottom: 18px; font-size: 0.88rem; font-weight: 600; border: 1px solid var(--card-border); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .streak { color: var(--warning); display: flex; align-items: center; gap: 6px; }
 
-    .nav-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-    .tab-btn { flex: 1; padding: 10px 6px; border: none; background: var(--card-bg); color: var(--muted); font-size: 0.85rem; font-weight: 600; cursor: pointer; border-radius: 8px; transition: 0.2s; }
-    .tab-btn.active { background: var(--accent); color: white; }
+    /* NAVIGATION TABS */
+    .nav-tabs { display: flex; gap: 6px; margin-bottom: 18px; background: rgba(19, 28, 46, 0.6); padding: 4px; border-radius: 12px; border: 1px solid var(--card-border); }
+    .tab-btn { flex: 1; padding: 10px 4px; border: none; background: transparent; color: var(--muted); font-size: 0.82rem; font-weight: 600; cursor: pointer; border-radius: 8px; transition: all 0.2s ease; text-align: center; }
+    .tab-btn.active { background: var(--accent); color: white; box-shadow: 0 2px 8px var(--accent-glow); }
 
-    .card { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin-bottom: 16px; }
+    /* CARDS & PANELS */
+    .card { background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--card-border); box-shadow: 0 8px 24px rgba(0,0,0,0.25); margin-bottom: 18px; }
     
-    .form-group { margin-bottom: 12px; }
-    label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--muted); font-weight: 600; }
-    input, textarea { width: 100%; padding: 10px 12px; border: 1px solid #334155; background: #0f172a; color: white; border-radius: 8px; font-size: 0.95rem; }
-    input:focus, textarea:focus { outline: 2px solid var(--accent); }
+    .form-group { margin-bottom: 14px; }
+    label { display: block; margin-bottom: 6px; font-size: 0.8rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    input, textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--card-border); background: #0b111e; color: white; border-radius: 10px; font-size: 0.95rem; transition: border 0.2s; }
+    input:focus, textarea:focus { outline: none; border-color: var(--accent); }
 
-    .btn { width: 100%; padding: 12px; border: none; background: var(--accent); color: white; font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-    .btn:hover { background: var(--accent-hover); }
-    .btn-secondary { background: var(--secondary); margin-top: 8px; font-size: 0.9rem; }
+    .btn { width: 100%; padding: 13px; border: none; background: var(--accent); color: white; font-size: 0.95rem; font-weight: 600; border-radius: 10px; cursor: pointer; transition: all 0.2s ease; }
+    .btn:active { transform: scale(0.98); }
+    .btn-secondary { background: var(--secondary); margin-top: 10px; font-size: 0.88rem; border: 1px solid var(--card-border); color: var(--muted); }
+    .btn-secondary:hover { color: white; background: #26334d; }
 
-    .word-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #334155; }
-    .word-term { font-weight: bold; font-size: 1.05rem; }
-    .word-def { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
-    .delete-btn { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; }
+    /* WORD LIST */
+    .word-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .word-item:last-child { border-bottom: none; }
+    .word-term { font-weight: 700; font-size: 1.05rem; color: #f1f5f9; }
+    .word-def { color: var(--muted); font-size: 0.88rem; margin-top: 3px; line-height: 1.3; }
+    .delete-btn { background: none; border: none; color: #64748b; cursor: pointer; font-size: 1.3rem; padding: 4px 8px; transition: color 0.2s; }
+    .delete-btn:hover { color: var(--danger); }
 
-    /* FLASHCARD */
-    .quiz-card { text-align: center; min-height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; border: 2px dashed #334155; user-select: none; }
-    .prompt-label { font-size: 0.8rem; color: var(--accent); text-transform: uppercase; font-weight: bold; margin-bottom: 12px; }
-    .quiz-term { font-size: 1.5rem; font-weight: bold; margin-bottom: 8px; word-break: break-word; }
-    .quiz-def { font-size: 1rem; color: var(--muted); display: none; margin-top: 10px; }
+    /* FLASHCARD COMPONENT */
+    .quiz-card { text-align: center; min-height: 210px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; border: 2px dashed var(--card-border); user-select: none; transition: all 0.2s; position: relative; background: #0e1626; }
+    .quiz-card:hover { border-color: var(--accent); }
+    .prompt-label { font-size: 0.75rem; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 12px; letter-spacing: 1px; }
+    .quiz-term { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; word-break: break-word; color: #fff; }
+    .quiz-def { font-size: 1.05rem; color: var(--muted); display: none; margin-top: 12px; line-height: 1.4; animation: fadeIn 0.3s forwards; }
 
     /* MULTIPLE CHOICE OPTIONS */
-    .mc-options { display: grid; gap: 10px; margin-top: 14px; }
-    .mc-btn { background: #0f172a; border: 1px solid #334155; color: white; padding: 12px; border-radius: 8px; font-size: 0.95rem; cursor: pointer; text-align: left; transition: 0.2s; }
+    .mc-options { display: grid; gap: 10px; margin-top: 16px; }
+    .mc-btn { background: #0b111e; border: 1px solid var(--card-border); color: #e2e8f0; padding: 14px; border-radius: 10px; font-size: 0.92rem; cursor: pointer; text-align: left; transition: all 0.2s; line-height: 1.3; }
     .mc-btn:hover { border-color: var(--accent); }
-    .mc-btn.correct-choice { background: #15803d !important; border-color: var(--success) !important; color: white; }
-    .mc-btn.wrong-choice { background: #991b1b !important; border-color: var(--danger) !important; color: white; }
+    .mc-btn.correct-choice { background: #064e3b !important; border-color: var(--success) !important; color: #a7f3d0; }
+    .mc-btn.wrong-choice { background: #7f1d1d !important; border-color: var(--danger) !important; color: #feccae; }
 
     /* TYPING INPUT */
-    .type-container { margin-top: 14px; }
-    .type-feedback { font-weight: bold; margin-top: 10px; text-align: center; font-size: 0.95rem; }
+    .type-feedback { font-weight: 700; margin-top: 14px; text-align: center; font-size: 0.95rem; }
 
-    .quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
-    .btn-correct { background: var(--success); }
-    .btn-wrong { background: var(--danger); }
+    .quiz-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .btn-correct { background: #059669; }
+    .btn-wrong { background: #dc2626; }
     
     .hidden { display: none !important; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
 
 <div class="container">
   <header>
-    <h1>Vocabulary Trainer</h1>
-    <p class="subtitle">Master Words Faster</p>
+    <div class="logo">Lexicon Pro</div>
+    <p class="subtitle">Personal Vocabulary & Recall Suite</p>
   </header>
 
-  <!-- STREAK & PROGRESS BAR -->
+  <!-- STREAK & STATS -->
   <div class="stats-bar">
-    <span class="streak">🔥 Streak: <span id="streakCount">0</span> Days</span>
-    <span>Reviewed Today: <b id="todayCount">0</b></span>
+    <span class="streak">🔥 <span id="streakCount">0</span> Day Streak</span>
+    <span style="color: var(--muted);">Reviewed Today: <b id="todayCount" style="color: var(--text);">0</b></span>
   </div>
 
+  <!-- NAVIGATION TABS -->
   <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('manage')">Manage</button>
     <button class="tab-btn" onclick="switchTab('cards')">Flashcards</button>
-    <button class="tab-btn" onclick="switchTab('mc')">Quiz Mode</button>
+    <button class="tab-btn" onclick="switchTab('mc')">Quiz</button>
     <button class="tab-btn" onclick="switchTab('type')">Spelling</button>
   </div>
 
@@ -103,67 +115,68 @@
       </div>
       <div class="form-group">
         <label for="meaningInput">Meaning / Definition</label>
-        <textarea id="meaningInput" rows="2" placeholder="e.g., Lasting for a short time."></textarea>
+        <textarea id="meaningInput" rows="2" placeholder="e.g., Lasting for a very short time."></textarea>
       </div>
       <button class="btn" onclick="addWord()">Add Word</button>
 
-      <div style="margin-top: 16px; border-top: 1px solid #334155; padding-top: 12px;">
-        <button class="btn btn-secondary" style="background: #991b1b; color: #fecaca;" onclick="resetToDefault()">🔄 Reset List</button>
+      <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+        <button class="btn btn-secondary" style="border-color: #7f1d1d; color: #fca5a5;" onclick="resetToDefault()">🔄 Reset to 97 Core Words</button>
       </div>
     </div>
 
     <div class="card">
       <div class="form-group">
-        <label for="searchInput">🔍 Search Saved Words</label>
+        <label for="searchInput">🔍 Search Vocabulary</label>
         <input type="text" id="searchInput" placeholder="Type to filter..." oninput="renderWordList()">
       </div>
-      <h3 style="margin-bottom: 8px; font-size: 1rem;">Saved Words (<span id="wordCount">0</span>)</h3>
+      <h3 style="margin-bottom: 12px; font-size: 0.95rem; color: var(--muted); font-weight: 600;">Saved Terms (<span id="wordCount">0</span>)</h3>
       <div id="wordList"></div>
     </div>
   </div>
 
-  <!-- 1. FLASHCARDS TAB -->
+  <!-- FLASHCARDS TAB -->
   <div id="cardsTab" class="hidden">
     <div class="card">
       <div class="card quiz-card" onclick="toggleAnswer()">
-        <span class="prompt-label" id="cardState">Click to reveal definition</span>
+        <span class="prompt-label" id="cardState">Tap to reveal answer</span>
         <div class="quiz-term" id="cardTerm">...</div>
         <div class="quiz-def" id="cardDef">...</div>
       </div>
       <div class="quiz-actions hidden" id="cardControls">
-        <button class="btn btn-wrong" onclick="nextCard(false)">Needs Practice ❌</button>
-        <button class="btn btn-correct" onclick="nextCard(true)">Got it! ✅</button>
+        <button class="btn btn-wrong" onclick="nextCard(false)">Needs Work ❌</button>
+        <button class="btn btn-correct" onclick="nextCard(true)">Mastered ✅</button>
       </div>
     </div>
   </div>
 
-  <!-- 2. MULTIPLE CHOICE TAB -->
+  <!-- MULTIPLE CHOICE TAB -->
   <div id="mcTab" class="hidden">
     <div class="card">
       <span class="prompt-label">Select the correct definition:</span>
-      <div class="quiz-term" id="mcTerm" style="margin-top:8px;">...</div>
+      <div class="quiz-term" id="mcTerm" style="margin-top:10px;">...</div>
       <div class="mc-options" id="mcOptions"></div>
-      <button class="btn btn-secondary hidden" id="mcNextBtn" onclick="startMCQuiz()">Next Word ➔</button>
+      <button class="btn btn-secondary hidden" id="mcNextBtn" style="margin-top:16px;" onclick="startMCQuiz()">Next Word ➔</button>
     </div>
   </div>
 
-  <!-- 3. SPELLING / TYPING TAB -->
+  <!-- SPELLING TAB -->
   <div id="typeTab" class="hidden">
     <div class="card">
-      <span class="prompt-label">Type the matching term:</span>
-      <div class="word-def" id="typeDef" style="font-size:1.1rem; color:white; margin: 12px 0;">...</div>
-      <div class="type-container">
-        <input type="text" id="typeInput" placeholder="Type word here..." autocomplete="off">
-        <button class="btn" style="margin-top:10px;" onclick="checkTypeAnswer()">Check Answer</button>
+      <span class="prompt-label">Type the corresponding word:</span>
+      <div class="word-def" id="typeDef" style="font-size:1.1rem; color:#fff; margin: 14px 0 18px 0; font-weight: 500;">...</div>
+      <div>
+        <input type="text" id="typeInput" placeholder="Type answer..." autocomplete="off">
+        <button class="btn" style="margin-top:12px;" onclick="checkTypeAnswer()">Verify Answer</button>
       </div>
       <div class="type-feedback" id="typeFeedback"></div>
-      <button class="btn btn-secondary hidden" id="typeNextBtn" onclick="startTypeQuiz()">Next Word ➔</button>
+      <button class="btn btn-secondary hidden" id="typeNextBtn" style="margin-top:16px;" onclick="startTypeQuiz()">Next Word ➔</button>
     </div>
   </div>
 
 </div>
 
 <script>
+  // Complete 97 Core Words Array
   const defaultWords = [
     {"id":1,"term":"resonate","meaning":"relate, match, echo"},
     {"id":2,"term":"fiction","meaning":"fake, product of imagination"},
@@ -174,34 +187,100 @@
     {"id":7,"term":"evoke","meaning":"provoke(reactions)"},
     {"id":8,"term":"trope","meaning":"topics, concerns"},
     {"id":9,"term":"indistinguishable","meaning":"similar"},
-    {"id":10,"term":"vivid","meaning":"bright"},
-    {"id":11,"term":"brute","meaning":"violent, rough, relentless, cruel"},
-    {"id":12,"term":"sentient","meaning":"able to experience emotions/senses"},
-    {"id":13,"term":"benchmark","meaning":"standard/point of reference"},
-    {"id":14,"term":"discern","meaning":"differentiate"},
-    {"id":15,"term":"ethos","meaning":"core moral beliefs"},
-    {"id":16,"term":"prowess","meaning":"great skill"},
-    {"id":17,"term":"innate","meaning":"natural, inborn"},
-    {"id":18,"term":"perpetuate","meaning":"cause to continue"},
-    {"id":19,"term":"relentless","meaning":"non-stop"},
-    {"id":20,"term":"strife","meaning":"struggle, suffering"},
-    {"id":21,"term":"accelerate","meaning":"speed up"},
-    {"id":22,"term":"famine","meaning":"extreme hunger"},
-    {"id":23,"term":"fragile","meaning":"weak, easy to break"},
-    {"id":24,"term":"bureaucracy","meaning":"paperwork, legislation"},
-    {"id":25,"term":"wary","meaning":"careful"},
-    {"id":26,"term":"ponder","meaning":"think deeply"},
-    {"id":27,"term":"tedious","meaning":"boring, daunting"},
-    {"id":28,"term":"dignity","meaning":"honor"},
-    {"id":29,"term":"benevolence","meaning":"mercy, kindness"},
-    {"id":30,"term":"scrutinize","meaning":"analyse, investigate"}
+    {"id":10,"term":"replicant","meaning":"humanoid, clone"},
+    {"id":11,"term":"vivid","meaning":"bright"},
+    {"id":12,"term":"brute","meaning":"violent, rough, relentless, cruel"},
+    {"id":13,"term":"entity","meaning":"being, body"},
+    {"id":14,"term":"sentient","meaning":"able to experience within (emotions, senses)"},
+    {"id":15,"term":"valid","meaning":"correct, sound"},
+    {"id":16,"term":"disruptive(innovation)","meaning":"major change/tool that enters many parts of life"},
+    {"id":17,"term":"incremental (innovation)","meaning":"small innovation"},
+    {"id":18,"term":"benchmark","meaning":"standard/point of reference"},
+    {"id":19,"term":"discern","meaning":"differentiate"},
+    {"id":20,"term":"threshold","meaning":"limit/tolerance level"},
+    {"id":21,"term":"recapitulate","meaning":"conclude, summarize"},
+    {"id":22,"term":"ethos","meaning":"core moral beliefs, moral compass"},
+    {"id":23,"term":"pioneer","meaning":"creator (the first)"},
+    {"id":24,"term":"prowess","meaning":"great skill"},
+    {"id":25,"term":"innate","meaning":"natural, inborn, inherent"},
+    {"id":26,"term":"embody","meaning":"represent, personify"},
+    {"id":27,"term":"perpetuate","meaning":"cause to continue, maintain"},
+    {"id":28,"term":"hallmark","meaning":"typical feature, stamp"},
+    {"id":29,"term":"hub","meaning":"center"},
+    {"id":30,"term":"relentless","meaning":"non-stop"},
+    {"id":31,"term":"complacent","meaning":"getting too comfortable(negative)"},
+    {"id":32,"term":"strife","meaning":"struggle, suffering"},
+    {"id":33,"term":"municipal","meaning":"local government"},
+    {"id":34,"term":"accelerate","meaning":"speed up, quicken"},
+    {"id":35,"term":"compact","meaning":"small (but in a good way)"},
+    {"id":36,"term":"densely populated","meaning":"lots of people per square km"},
+    {"id":37,"term":"sprawling","meaning":"expanding in terms of size"},
+    {"id":38,"term":"duplicate","meaning":"copy"},
+    {"id":39,"term":"slum","meaning":"poor neighbourhood"},
+    {"id":40,"term":"spread","meaning":"proliferation"},
+    {"id":41,"term":"surplus","meaning":"abundance"},
+    {"id":42,"term":"staff","meaning":"personnel"},
+    {"id":43,"term":"enclosed","meaning":"fenced"},
+    {"id":44,"term":"ties","meaning":"bond, links, connections, network"},
+    {"id":45,"term":"harshness","meaning":"severity"},
+    {"id":46,"term":"fertile","meaning":"productive"},
+    {"id":47,"term":"famine","meaning":"extreme hunger"},
+    {"id":48,"term":"elaborate (adj)","meaning":"complex, sophisticated, detailed"},
+    {"id":49,"term":"elaborate (v)","meaning":"expand, clarify"},
+    {"id":50,"term":"subsistence","meaning":"survival level resources"},
+    {"id":51,"term":"fragile","meaning":"weak, easy to break"},
+    {"id":52,"term":"comprehensive","meaning":"detailed, clear"},
+    {"id":53,"term":"bureaucracy","meaning":"paperwork, legislation"},
+    {"id":54,"term":"wary","meaning":"careful"},
+    {"id":55,"term":"encompass","meaning":"include"},
+    {"id":56,"term":"urge","meaning":"desire, push"},
+    {"id":57,"term":"qualitative","meaning":"study based on qualities"},
+    {"id":58,"term":"quantitative","meaning":"study based on numbers"},
+    {"id":59,"term":"fad","meaning":"short-lived trend"},
+    {"id":60,"term":"beholden","meaning":"favor for a favor"},
+    {"id":61,"term":"stress (v)","meaning":"highlight, emphasize"},
+    {"id":62,"term":"leverage","meaning":"benefit"},
+    {"id":63,"term":"ponder","meaning":"think deeply"},
+    {"id":64,"term":"envisage","meaning":"imagine"},
+    {"id":65,"term":"elevation","meaning":"rise, growth"},
+    {"id":66,"term":"dicipline(N)","meaning":"subject"},
+    {"id":67,"term":"intrinsic","meaning":"internal, inner"},
+    {"id":68,"term":"mobilize","meaning":"equip with, empower, enable"},
+    {"id":69,"term":"tedious","meaning":"boring, daunting"},
+    {"id":70,"term":"scholarly","meaning":"scientific, academic"},
+    {"id":71,"term":"pre-eminently","meaning":"predominantly"},
+    {"id":72,"term":"pre-eminent","meaning":"superior"},
+    {"id":73,"term":"subject matter","meaning":"topic(what is being discussed)"},
+    {"id":74,"term":"apt","meaning":"suitable for"},
+    {"id":75,"term":"inquiry","meaning":"request, search for information"},
+    {"id":76,"term":"protagonist","meaning":"main character(usually a good one)"},
+    {"id":77,"term":"antagonist","meaning":"main character (usually a bad one)"},
+    {"id":78,"term":"collapse","meaning":"fall"},
+    {"id":79,"term":"echo(V)","meaning":"resonate, relate"},
+    {"id":80,"term":"deference","meaning":"respect, obedience"},
+    {"id":81,"term":"disenchantment","meaning":"frustration, disappointment"},
+    {"id":82,"term":"memorabilia","meaning":"tools kept from the past"},
+    {"id":83,"term":"left","meaning":"liberal"},
+    {"id":84,"term":"right","meaning":"conservative"},
+    {"id":85,"term":"emblem","meaning":"symbol, representation, testament"},
+    {"id":86,"term":"folk","meaning":"traditional"},
+    {"id":87,"term":"dignity","meaning":"honor"},
+    {"id":88,"term":"impetus","meaning":"driving factor, force"},
+    {"id":89,"term":"amass","meaning":"collecting, gathering"},
+    {"id":90,"term":"indulgence","meaning":"letting yourself do what's enjoyable"},
+    {"id":91,"term":"flatter","meaning":"giving compliments in a fake way"},
+    {"id":92,"term":"benevolence","meaning":"mercy, kindness"},
+    {"id":93,"term":"eccentric","meaning":"weird, strange, unusual"},
+    {"id":94,"term":"subversive","meaning":"used to overthrow the current regime"},
+    {"id":95,"term":"condescension","meaning":"arrogant, patronizing"},
+    {"id":96,"term":"hindsight","meaning":"realization of the past"},
+    {"id":97,"term":"scrutinize","meaning":"analyse, investigate"}
   ];
 
-  let words = JSON.parse(localStorage.getItem('vocab_v5_words')) || defaultWords;
-  let stats = JSON.parse(localStorage.getItem('vocab_v5_stats')) || { streak: 0, lastDate: '', todayCount: 0 };
+  let words = JSON.parse(localStorage.getItem('lexicon_words')) || defaultWords;
+  let stats = JSON.parse(localStorage.getItem('lexicon_stats')) || { streak: 0, lastDate: '', todayCount: 0 };
   let currentWord = null;
 
-  // STREAK LOGIC
   function checkStreak() {
     const today = new Date().toISOString().split('T')[0];
     if (stats.lastDate !== today) {
@@ -209,10 +288,10 @@
       yesterday.setDate(yesterday.getDate() - 1);
       const yesterdayStr = yesterday.toISOString().split('T')[0];
 
-      if (stats.lastDate !== yesterdayStr) {
-        stats.streak = 0; // Missed a day
+      if (stats.lastDate !== yesterdayStr && stats.lastDate !== '') {
+        stats.streak = 0;
       }
-      stats.todayCount = 0; // Reset daily count
+      stats.todayCount = 0;
     }
     document.getElementById('streakCount').textContent = stats.streak;
     document.getElementById('todayCount').textContent = stats.todayCount;
@@ -225,19 +304,19 @@
       stats.lastDate = today;
     }
     stats.todayCount += 1;
-    localStorage.setItem('vocab_v5_stats', JSON.stringify(stats));
+    localStorage.setItem('lexicon_stats', JSON.stringify(stats));
     checkStreak();
   }
 
   function saveAndRender() {
-    localStorage.setItem('vocab_v5_words', JSON.stringify(words));
+    localStorage.setItem('lexicon_words', JSON.stringify(words));
     renderWordList();
   }
 
   function addWord() {
     const term = document.getElementById('wordInput').value.trim();
     const meaning = document.getElementById('meaningInput').value.trim();
-    if (!term || !meaning) return alert("Fill in both fields!");
+    if (!term || !meaning) return alert("Please fill in both word and definition!");
     words.push({ id: Date.now(), term, meaning });
     document.getElementById('wordInput').value = '';
     document.getElementById('meaningInput').value = '';
@@ -250,7 +329,7 @@
   }
 
   function resetToDefault() {
-    if (confirm("Reset to default words?")) {
+    if (confirm("Reset to full 97 word default list?")) {
       words = [...defaultWords];
       saveAndRender();
     }
@@ -263,7 +342,7 @@
     document.getElementById('wordCount').textContent = words.length;
 
     if (filtered.length === 0) {
-      listEl.innerHTML = '<p style="color:var(--muted); text-align:center; padding:10px;">No words found.</p>';
+      listEl.innerHTML = '<p style="color:var(--muted); text-align:center; padding:12px;">No matching words found.</p>';
       return;
     }
 
@@ -278,11 +357,11 @@
     `).join('');
   }
 
-  /* 1. FLASHCARD MODE */
+  /* FLASHCARD ENGINE */
   function startCards() {
     if (words.length === 0) return;
     currentWord = words[Math.floor(Math.random() * words.length)];
-    document.getElementById('cardState').textContent = 'Click to reveal definition';
+    document.getElementById('cardState').textContent = 'Tap to reveal answer';
     document.getElementById('cardTerm').textContent = currentWord.term;
     document.getElementById('cardDef').textContent = currentWord.meaning;
     document.getElementById('cardDef').style.display = 'none';
@@ -294,7 +373,7 @@
     const defEl = document.getElementById('cardDef');
     const isHidden = defEl.style.display === 'none';
     defEl.style.display = isHidden ? 'block' : 'none';
-    document.getElementById('cardState').textContent = isHidden ? 'Definition:' : 'Click to reveal';
+    document.getElementById('cardState').textContent = isHidden ? 'Definition:' : 'Tap to reveal answer';
     document.getElementById('cardControls').classList.toggle('hidden', !isHidden);
   }
 
@@ -303,14 +382,13 @@
     startCards();
   }
 
-  /* 2. MULTIPLE CHOICE QUIZ MODE */
+  /* MULTIPLE CHOICE ENGINE */
   function startMCQuiz() {
-    if (words.length < 4) return alert("You need at least 4 words for multiple choice quiz!");
+    if (words.length < 4) return alert("Add at least 4 words to enable Quiz mode!");
     document.getElementById('mcNextBtn').classList.add('hidden');
     currentWord = words[Math.floor(Math.random() * words.length)];
     document.getElementById('mcTerm').textContent = currentWord.term;
 
-    // Grab 3 wrong options randomly
     let wrongPool = words.filter(w => w.id !== currentWord.id);
     wrongPool.sort(() => 0.5 - Math.random());
     let choices = [currentWord, wrongPool[0], wrongPool[1], wrongPool[2]];
@@ -335,7 +413,7 @@
     document.getElementById('mcNextBtn').classList.remove('hidden');
   }
 
-  /* 3. SPELLING / TYPING MODE */
+  /* SPELLING ENGINE */
   function startTypeQuiz() {
     if (words.length === 0) return;
     document.getElementById('typeNextBtn').classList.add('hidden');
@@ -353,19 +431,19 @@
     const feedback = document.getElementById('typeFeedback');
 
     if (input === cleanTarget) {
-      feedback.textContent = "Correct! 🎉";
+      feedback.textContent = "Correct! ✨";
       feedback.style.color = "var(--success)";
       document.getElementById('typeInput').disabled = true;
       document.getElementById('typeNextBtn').classList.remove('hidden');
       incrementReview();
     } else {
-      feedback.textContent = `Not quite! Answer is: "${cleanTarget}"`;
+      feedback.textContent = `Incorrect. Correct word: "${cleanTarget}"`;
       feedback.style.color = "var(--danger)";
       document.getElementById('typeNextBtn').classList.remove('hidden');
     }
   }
 
-  /* TAB SWITCHER */
+  /* TAB CONTROLLER */
   function switchTab(tab) {
     ['manageTab', 'cardsTab', 'mcTab', 'typeTab'].forEach(t => document.getElementById(t).classList.add('hidden'));
     const btns = document.querySelectorAll('.tab-btn');
