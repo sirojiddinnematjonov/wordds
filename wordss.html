@@ -53,8 +53,8 @@
     .quiz-card { text-align: center; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; user-select: none; border: 2px dashed #334155; }
     .quiz-card:hover { border-color: var(--accent); }
     .prompt-label { font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 12px; }
-    .quiz-term { font-size: 2rem; font-weight: bold; margin-bottom: 12px; }
-    .quiz-def { font-size: 1.2rem; color: var(--muted); display: none; margin-top: 10px; }
+    .quiz-term { font-size: 1.8rem; font-weight: bold; margin-bottom: 12px; word-break: break-word; }
+    .quiz-def { font-size: 1.1rem; color: var(--muted); display: none; margin-top: 10px; }
     
     .quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
     .btn-correct { background: var(--success); }
@@ -68,7 +68,7 @@
 <div class="container">
   <header>
     <h1>Vocabulary Trainer</h1>
-    <p class="subtitle">Enter words, save them, and practice on any device!</p>
+    <p class="subtitle">Master your word list anywhere, anytime!</p>
   </header>
 
   <div class="nav-tabs">
@@ -80,22 +80,22 @@
   <div id="manageTab">
     <div class="card">
       <div class="form-group">
-        <label for="wordInput">Word / Phrase</label>
+        <label for="wordInput">Add New Word / Phrase</label>
         <input type="text" id="wordInput" placeholder="e.g., Ephemeral">
       </div>
       <div class="form-group">
         <label for="meaningInput">Meaning / Definition</label>
-        <textarea id="meaningInput" rows="2" placeholder="e.g., Lasting for a very short time."></textarea>
+        <textarea id="meaningInput" rows="2" placeholder="e.g., Lasting for a short time."></textarea>
       </div>
       <button class="btn" onclick="addWord()">Add Word</button>
 
-      <!-- EXPORT / IMPORT SECTION -->
       <div style="margin-top: 20px; border-top: 1px solid #334155; padding-top: 16px;">
-        <label>Transfer Words to iPhone</label>
+        <label>Backup Options</label>
         <div class="sync-actions">
           <button class="btn btn-secondary" onclick="exportWords()">📥 Export File</button>
           <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import File</button>
         </div>
+        <button class="btn btn-secondary" style="background: #991b1b; color: #fecaca; margin-top: 10px;" onclick="resetToDefault()">🔄 Reset to Default List</button>
         <input type="file" id="importFile" class="hidden" accept=".json" onchange="importWords(event)">
       </div>
     </div>
@@ -124,7 +124,109 @@
 </div>
 
 <script>
-  let words = JSON.parse(localStorage.getItem('user_vocab')) || [];
+  // DEFAULT HARDCODED WORD LIST
+  const defaultWords = [
+    {"id":1786654867752,"term":"resonate","meaning":"relate, match, echo"},
+    {"id":1786654950535,"term":"fiction","meaning":"fake, product of imagination"},
+    {"id":1786654963755,"term":"agenda","meaning":"plan, goals"},
+    {"id":1786655724371,"term":"myriad","meaning":"a lot"},
+    {"id":1786655739501,"term":"ominously","meaning":"evil, negative"},
+    {"id":1786655767935,"term":"pursue","meaning":"chase, follow"},
+    {"id":1786655902903,"term":"evoke","meaning":"provoke(reactions)"},
+    {"id":1786655918738,"term":"trope","meaning":"topics, concerns"},
+    {"id":1786655931841,"term":"indistinguishable","meaning":"similar"},
+    {"id":1786655963388,"term":"replicant","meaning":"humanoid, clone"},
+    {"id":1786655995702,"term":"vivid","meaning":"bright"},
+    {"id":1786656019797,"term":"brute","meaning":"violent, rough, relentless, cruel"},
+    {"id":1786656046202,"term":"entity","meaning":"being, body"},
+    {"id":1786656136782,"term":"sentient","meaning":"able to experience wwithin (emotions, senses)"},
+    {"id":1786656150796,"term":"valid","meaning":"correct, sound"},
+    {"id":1786656192411,"term":"disruptive(innovation)","meaning":"major change/tool that enters many parts of life"},
+    {"id":1786656219800,"term":"incremental (innovation)","meaning":"small innovation"},
+    {"id":1786656247427,"term":"benchmark","meaning":"standard/point of reference"},
+    {"id":1786656261081,"term":"discern","meaning":"differentiate"},
+    {"id":1786656274858,"term":"threshold","meaning":"limit/tolerance level"},
+    {"id":1786656292016,"term":"recapitulate","meaning":"conclude, summarize"},
+    {"id":1786656318186,"term":"ethos","meaning":"core moral beliefs, moral compass"},
+    {"id":1786656356467,"term":"pioneer","meaning":"creator (the first)"},
+    {"id":1786656398820,"term":"prowess","meaning":"great skill"},
+    {"id":1786656418047,"term":"innate","meaning":"natural, inborn, inherent"},
+    {"id":1786656492818,"term":"embody","meaning":"represent, personify"},
+    {"id":1786656542087,"term":"perpetuate","meaning":"cause to continue, maintain"},
+    {"id":1786656567040,"term":"hallmark","meaning":"typical feature, stamp"},
+    {"id":1786677809914,"term":"hub","meaning":"center"},
+    {"id":1786677821442,"term":"relentless","meaning":"non-stop"},
+    {"id":1786677849809,"term":"complacent","meaning":"getting too comfortable(negative)"},
+    {"id":1786677863286,"term":"strife","meaning":"struggle, suffering"},
+    {"id":1786677871718,"term":"municipal","meaning":"local government"},
+    {"id":1786677886112,"term":"accelerate","meaning":"speed up, quicken"},
+    {"id":1786677902587,"term":"compact","meaning":"small (but in a good way)"},
+    {"id":1786677925173,"term":"densely populated","meaning":"lots of people per square km"},
+    {"id":1786677940898,"term":"sprawling","meaning":"expanding in terms of size"},
+    {"id":1786677949615,"term":"duplicate","meaning":"copy"},
+    {"id":1786677968449,"term":"slum","meaning":"poor neighbourhood"},
+    {"id":1786677980810,"term":"spread","meaning":"proliferation"},
+    {"id":1786677995775,"term":"surplus","meaning":"abundance"},
+    {"id":1786678005608,"term":"staff","meaning":"personnel"},
+    {"id":1786678020565,"term":"enclosed","meaning":"fenced"},
+    {"id":1786678036761,"term":"ties","meaning":"bond, links, connections, network"},
+    {"id":1786678044909,"term":"harshness","meaning":"severity"},
+    {"id":1786678058214,"term":"fertile","meaning":"productive"},
+    {"id":1786678070134,"term":"famine","meaning":"extreme hunger"},
+    {"id":1786678092952,"term":"elaborate (adj)","meaning":"complex, sophisticated, detailed"},
+    {"id":1786678110034,"term":"elaborate (v)","meaning":"expand, clarify"},
+    {"id":1786678153675,"term":"subsistence","meaning":"survival level resources"},
+    {"id":1786678179778,"term":"fragile","meaning":"weak, easy to break"},
+    {"id":1786678199910,"term":"comprehensive","meaning":"detailed, clear"},
+    {"id":1786678214464,"term":"bureaucracy","meaning":"paperwork, legislation"},
+    {"id":1786678221109,"term":"wary","meaning":"careful"},
+    {"id":1786678230737,"term":"encompass","meaning":"include"},
+    {"id":1786678242951,"term":"urge","meaning":"desire, push"},
+    {"id":1786678264504,"term":"qualitative","meaning":"study based on qualities"},
+    {"id":1786678290967,"term":"quantitative","meaning":"study based on numbers"},
+    {"id":1786678301684,"term":"fad","meaning":"short-lived trend"},
+    {"id":1786678330831,"term":"beholden","meaning":"favor for a favor (feeling responsibility for help proved earlier)"},
+    {"id":1786678349827,"term":"stress (v)","meaning":"highlight, emphasize"},
+    {"id":1786678359744,"term":"leverage","meaning":"benefit"},
+    {"id":1786678402192,"term":"ponder","meaning":"think deeply"},
+    {"id":1786678426435,"term":"envisage","meaning":"imagine"},
+    {"id":1786678834388,"term":"elevation","meaning":"rise, growth"},
+    {"id":1786678857303,"term":"dicipline(N)","meaning":"subject"},
+    {"id":1786678869750,"term":"intrinsic","meaning":"internal, inner"},
+    {"id":1786678899471,"term":"mobilize","meaning":"equip with, empower, enable"},
+    {"id":1786678909267,"term":"tedious","meaning":"boring, daunting"},
+    {"id":1786678920871,"term":"scholarly","meaning":"scientific, academic"},
+    {"id":1786678935848,"term":"pre-eminently","meaning":"predominantly"},
+    {"id":1786678944028,"term":"pre-eminent","meaning":"superior"},
+    {"id":1786678962199,"term":"subject matter","meaning":"topic(what is being discussed)"},
+    {"id":1786678973475,"term":"apt","meaning":"suitable for"},
+    {"id":1786678992414,"term":"inquiry","meaning":"request, search for information"},
+    {"id":1786679017094,"term":"protagonist","meaning":"main character(usually a good one)"},
+    {"id":1786679039857,"term":"antagonist","meaning":"main character (usually a bad one)"},
+    {"id":1786679052576,"term":"collapse","meaning":"fall"},
+    {"id":1786679066837,"term":"echo(V)","meaning":"resonate, relate"},
+    {"id":1786679079164,"term":"deference","meaning":"respect, obedience"},
+    {"id":1786679130020,"term":"disenchantment","meaning":"frustration, disappointment"},
+    {"id":1786679145368,"term":"memorabilia","meaning":"tools kept from the past"},
+    {"id":1786679158968,"term":"left","meaning":"liberal"},
+    {"id":1786679169982,"term":"right","meaning":"conservative"},
+    {"id":1786679191020,"term":"emblem","meaning":"symbol, representation, testament"},
+    {"id":1786679198469,"term":"folk","meaning":"traditional"},
+    {"id":1786679205566,"term":"dignity","meaning":"honor"},
+    {"id":1786679221561,"term":"impetus","meaning":"driving factor, force"},
+    {"id":1786679236137,"term":"amass","meaning":"collecting, gathering"},
+    {"id":1786679263195,"term":"indulgence","meaning":"letting yourself do what's enjoyable (but in a bad way)"},
+    {"id":1786679281701,"term":"flatter","meaning":"giving compliments in a rather fake way"},
+    {"id":1786679300337,"term":"benevolence","meaning":"mercy, kindness"},
+    {"id":1786679319502,"term":"eccentric","meaning":"weird, strange, unusual"},
+    {"id":1786679367325,"term":"subversive","meaning":"used to overthrow the current regime, opposing the \"normal\" idea"},
+    {"id":1786679388301,"term":"condescension","meaning":"arrogant, patronizing"},
+    {"id":1786679401877,"term":"hindsight","meaning":"realization of the past"},
+    {"id":1786679426952,"term":"scrutinize","meaning":"analyse, investigate"}
+  ];
+
+  let savedWords = JSON.parse(localStorage.getItem('user_vocab'));
+  let words = (savedWords && savedWords.length > 0) ? savedWords : [...defaultWords];
   let currentWordIndex = -1;
   let isAnswerVisible = false;
 
@@ -153,6 +255,13 @@
     saveAndRender();
   }
 
+  function resetToDefault() {
+    if (confirm("Reset to the default built-in word list?")) {
+      words = [...defaultWords];
+      saveAndRender();
+    }
+  }
+
   function renderWordList() {
     const listEl = document.getElementById('wordList');
     document.getElementById('wordCount').textContent = words.length;
@@ -173,7 +282,6 @@
     `).join('');
   }
 
-  // EXPORT WORDS TO FILE
   function exportWords() {
     if (words.length === 0) {
       alert("No words to export!");
@@ -188,7 +296,6 @@
     downloadAnchor.remove();
   }
 
-  // IMPORT WORDS FROM FILE
   function importWords(event) {
     const file = event.target.files[0];
     if (!file) return;
