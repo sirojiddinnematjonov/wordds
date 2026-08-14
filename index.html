@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vocabulary Trainer</title>
+  <title>Vocabulary Trainer Pro</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -21,41 +21,53 @@
     body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; padding: 20px; }
     .container { width: 100%; max-width: 600px; }
     
-    header { text-align: center; margin-bottom: 24px; }
-    h1 { font-size: 1.8rem; margin-bottom: 8px; color: #fff; }
-    p.subtitle { color: var(--muted); font-size: 0.95rem; }
+    header { text-align: center; margin-bottom: 20px; }
+    h1 { font-size: 1.8rem; margin-bottom: 6px; color: #fff; }
+    p.subtitle { color: var(--muted); font-size: 0.9rem; }
 
-    .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+    .nav-tabs { display: flex; gap: 10px; margin-bottom: 16px; }
     .tab-btn { flex: 1; padding: 12px; border: none; background: var(--card-bg); color: var(--muted); font-weight: 600; cursor: pointer; border-radius: 8px; transition: all 0.2s; }
     .tab-btn.active { background: var(--accent); color: white; }
 
-    .card { background: var(--card-bg); padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin-bottom: 20px; }
+    .card { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin-bottom: 16px; }
     
-    .form-group { margin-bottom: 16px; }
+    .form-group { margin-bottom: 12px; }
     label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--muted); font-weight: 600; }
-    input, textarea { width: 100%; padding: 12px; border: 1px solid #334155; background: #0f172a; color: white; border-radius: 8px; font-size: 1rem; }
+    input, textarea { width: 100%; padding: 10px 12px; border: 1px solid #334155; background: #0f172a; color: white; border-radius: 8px; font-size: 0.95rem; }
     input:focus, textarea:focus { outline: 2px solid var(--accent); }
 
     .btn { width: 100%; padding: 12px; border: none; background: var(--accent); color: white; font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; }
     .btn:hover { background: var(--accent-hover); }
     
-    .btn-secondary { background: var(--secondary); margin-top: 8px; }
+    .btn-secondary { background: var(--secondary); margin-top: 8px; font-size: 0.9rem; }
     .btn-secondary:hover { background: #475569; }
 
-    .sync-actions { display: flex; gap: 10px; margin-top: 10px; }
+    .sync-actions { display: flex; gap: 10px; }
+
+    /* Progress Bar */
+    .progress-container { background: #334155; border-radius: 10px; height: 12px; width: 100%; overflow: hidden; margin: 10px 0 16px 0; }
+    .progress-bar { background: var(--success); height: 100%; width: 0%; transition: width 0.3s ease; }
+
+    /* Quiz Tools */
+    .quiz-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.85rem; color: var(--muted); }
+    .mode-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; }
 
     .word-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #334155; }
     .word-item:last-child { border-bottom: none; }
-    .word-term { font-weight: bold; font-size: 1.1rem; }
-    .word-def { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+    .word-term { font-weight: bold; font-size: 1.05rem; }
+    .word-def { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
     .delete-btn { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; padding: 4px 8px; }
 
-    .quiz-card { text-align: center; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; user-select: none; border: 2px dashed #334155; }
+    .quiz-card { text-align: center; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; user-select: none; border: 2px dashed #334155; position: relative; }
     .quiz-card:hover { border-color: var(--accent); }
     .prompt-label { font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 12px; }
-    .quiz-term { font-size: 1.8rem; font-weight: bold; margin-bottom: 12px; word-break: break-word; }
-    .quiz-def { font-size: 1.1rem; color: var(--muted); display: none; margin-top: 10px; }
+    .quiz-term { font-size: 1.6rem; font-weight: bold; margin-bottom: 8px; word-break: break-word; }
+    .quiz-def { font-size: 1.05rem; color: var(--muted); display: none; margin-top: 10px; }
     
+    .audio-group { display: flex; gap: 8px; margin-top: 8px; }
+    .audio-btn { background: #334155; color: white; border: none; border-radius: 20px; padding: 6px 14px; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .audio-btn:hover { background: var(--accent); }
+
     .quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
     .btn-correct { background: var(--success); }
     .btn-wrong { background: var(--danger); }
@@ -67,8 +79,8 @@
 
 <div class="container">
   <header>
-    <h1>Vocabulary Trainer</h1>
-    <p class="subtitle">Master your word list anywhere, anytime!</p>
+    <h1>Vocabulary Trainer Pro</h1>
+    <p class="subtitle">Human Dictionary Audio • Smart Repetition</p>
   </header>
 
   <div class="nav-tabs">
@@ -89,42 +101,65 @@
       </div>
       <button class="btn" onclick="addWord()">Add Word</button>
 
-      <div style="margin-top: 20px; border-top: 1px solid #334155; padding-top: 16px;">
-        <label>Backup Options</label>
+      <div style="margin-top: 16px; border-top: 1px solid #334155; padding-top: 12px;">
         <div class="sync-actions">
-          <button class="btn btn-secondary" onclick="exportWords()">📥 Export File</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import File</button>
+          <button class="btn btn-secondary" onclick="exportWords()">📥 Export JSON</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import JSON</button>
         </div>
-        <button class="btn btn-secondary" style="background: #991b1b; color: #fecaca; margin-top: 10px;" onclick="resetToDefault()">🔄 Reset to Default List</button>
+        <button class="btn btn-secondary" style="background: #991b1b; color: #fecaca;" onclick="resetToDefault()">🔄 Reset List</button>
         <input type="file" id="importFile" class="hidden" accept=".json" onchange="importWords(event)">
       </div>
     </div>
 
+    <!-- SEARCH & WORD LIST -->
     <div class="card">
-      <h3 style="margin-bottom: 12px;">Saved Words (<span id="wordCount">0</span>)</h3>
+      <div class="form-group">
+        <label for="searchInput">🔍 Search Saved Words</label>
+        <input type="text" id="searchInput" placeholder="Type to filter..." oninput="renderWordList()">
+      </div>
+      <h3 style="margin-bottom: 8px; font-size: 1rem;">Saved Words (<span id="wordCount">0</span>)</h3>
       <div id="wordList"></div>
     </div>
   </div>
 
   <!-- QUIZ TAB -->
   <div id="quizTab" class="hidden">
-    <div id="quizContainer">
-      <div class="card quiz-card" onclick="toggleAnswer()">
-        <span class="prompt-label" id="cardState">Click to reveal definition</span>
-        <div class="quiz-term" id="quizTerm">No words added yet!</div>
-        <div class="quiz-def" id="quizDef">Add or import words first.</div>
+    <div class="card" style="padding: 16px;">
+      <div class="quiz-options">
+        <span>Mastery Progress: <b id="masteryPercent">0%</b></span>
+        <label class="mode-toggle">
+          <input type="checkbox" id="reverseMode" onchange="startQuiz()">
+          Reverse (Def → Term)
+        </label>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
       </div>
 
-      <div class="quiz-actions hidden" id="quizControls">
-        <button class="btn btn-wrong" onclick="nextCard(false)">Needs Practice ❌</button>
-        <button class="btn btn-correct" onclick="nextCard(true)">Got it! ✅</button>
+      <div id="quizContainer">
+        <div class="card quiz-card" onclick="toggleAnswer()">
+          <span class="prompt-label" id="cardState">Click to reveal definition</span>
+          <div class="quiz-term" id="quizTerm">No words added yet!</div>
+          
+          <!-- DUAL AUDIO BUTTONS -->
+          <div class="audio-group hidden" id="audioControls">
+            <button class="audio-btn" onclick="playHumanAudio(event, 'us')">🔊 US Accent</button>
+            <button class="audio-btn" onclick="playHumanAudio(event, 'uk')">🔊 UK Accent</button>
+          </div>
+
+          <div class="quiz-def" id="quizDef">Add or import words first.</div>
+        </div>
+
+        <div class="quiz-actions hidden" id="quizControls">
+          <button class="btn btn-wrong" onclick="nextCard(false)">Needs Practice ❌</button>
+          <button class="btn btn-correct" onclick="nextCard(true)">Got it! ✅</button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  // DEFAULT HARDCODED WORD LIST
   const defaultWords = [
     {"id":1786654867752,"term":"resonate","meaning":"relate, match, echo"},
     {"id":1786654950535,"term":"fiction","meaning":"fake, product of imagination"},
@@ -225,13 +260,13 @@
     {"id":1786679426952,"term":"scrutinize","meaning":"analyse, investigate"}
   ];
 
-  let savedWords = JSON.parse(localStorage.getItem('user_vocab'));
-  let words = (savedWords && savedWords.length > 0) ? savedWords : [...defaultWords];
-  let currentWordIndex = -1;
+  let savedWords = JSON.parse(localStorage.getItem('user_vocab_v3'));
+  let words = (savedWords && savedWords.length > 0) ? savedWords : defaultWords.map(w => ({ ...w, score: 0 }));
+  let currentWord = null;
   let isAnswerVisible = false;
 
   function saveAndRender() {
-    localStorage.setItem('user_vocab', JSON.stringify(words));
+    localStorage.setItem('user_vocab_v3', JSON.stringify(words));
     renderWordList();
   }
 
@@ -244,7 +279,7 @@
       return;
     }
 
-    words.push({ id: Date.now(), term, meaning });
+    words.push({ id: Date.now(), term, meaning, score: 0 });
     document.getElementById('wordInput').value = '';
     document.getElementById('meaningInput').value = '';
     saveAndRender();
@@ -256,22 +291,25 @@
   }
 
   function resetToDefault() {
-    if (confirm("Reset to the default built-in word list?")) {
-      words = [...defaultWords];
+    if (confirm("Reset to default word list?")) {
+      words = defaultWords.map(w => ({ ...w, score: 0 }));
       saveAndRender();
     }
   }
 
   function renderWordList() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
     const listEl = document.getElementById('wordList');
+    const filtered = words.filter(w => w.term.toLowerCase().includes(query) || w.meaning.toLowerCase().includes(query));
+    
     document.getElementById('wordCount').textContent = words.length;
 
-    if (words.length === 0) {
-      listEl.innerHTML = '<p style="color: var(--muted); text-align:center;">No words saved yet.</p>';
+    if (filtered.length === 0) {
+      listEl.innerHTML = '<p style="color: var(--muted); text-align:center; padding: 12px;">No matching words found.</p>';
       return;
     }
 
-    listEl.innerHTML = words.map(w => `
+    listEl.innerHTML = filtered.map(w => `
       <div class="word-item">
         <div>
           <div class="word-term">${w.term}</div>
@@ -283,39 +321,150 @@
   }
 
   function exportWords() {
-    if (words.length === 0) {
-      alert("No words to export!");
-      return;
-    }
+    if (words.length === 0) return alert("No words to export!");
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(words));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", "my_vocab_words.json");
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
+    const a = document.createElement('a');
+    a.href = dataStr;
+    a.download = "my_vocab_words.json";
+    a.click();
   }
 
-  function importWords(event) {
-    const file = event.target.files[0];
+  function importWords(e) {
+    const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function(evt) {
       try {
-        const importedData = JSON.parse(e.target.result);
-        if (Array.isArray(importedData)) {
-          words = importedData;
+        const imported = JSON.parse(evt.target.result);
+        if (Array.isArray(imported)) {
+          words = imported.map(w => ({ ...w, score: w.score || 0 }));
           saveAndRender();
-          alert("Successfully imported " + words.length + " words!");
-        } else {
-          alert("Invalid file format.");
+          alert("Imported " + words.length + " words!");
         }
-      } catch (err) {
-        alert("Failed to read file.");
-      }
+      } catch (err) { alert("Invalid JSON file."); }
     };
     reader.readAsText(file);
+  }
+
+  /* --- QUIZ LOGIC WITH SMART REPETITION --- */
+  function startQuiz() {
+    if (words.length === 0) {
+      document.getElementById('quizTerm').textContent = "No words added yet!";
+      document.getElementById('quizDef').textContent = "Add or import words first.";
+      document.getElementById('cardState').style.display = 'none';
+      document.getElementById('quizControls').classList.add('hidden');
+      document.getElementById('audioControls').classList.add('hidden');
+      return;
+    }
+
+    updateMasteryProgress();
+
+    // Weighted selection for spaced repetition
+    let pool = [];
+    words.forEach(w => {
+      let weight = Math.max(1, 5 - (w.score || 0));
+      for (let i = 0; i < weight; i++) pool.push(w);
+    });
+
+    currentWord = pool[Math.floor(Math.random() * pool.length)];
+    showCard();
+  }
+
+  function updateMasteryProgress() {
+    const totalMastery = words.reduce((acc, w) => acc + Math.min(3, w.score || 0), 0);
+    const maxMastery = words.length * 3;
+    const percentage = maxMastery > 0 ? Math.round((totalMastery / maxMastery) * 100) : 0;
+
+    document.getElementById('masteryPercent').textContent = percentage + '%';
+    document.getElementById('progressBar').style.width = percentage + '%';
+  }
+
+  function showCard() {
+    isAnswerVisible = false;
+    const isReverse = document.getElementById('reverseMode').checked;
+
+    document.getElementById('cardState').style.display = 'block';
+    document.getElementById('cardState').textContent = isReverse ? 'Guess the Term:' : 'Click to reveal definition';
+
+    document.getElementById('quizTerm').textContent = isReverse ? currentWord.meaning : currentWord.term;
+    document.getElementById('quizDef').textContent = isReverse ? currentWord.term : currentWord.meaning;
+    
+    document.getElementById('quizDef').style.display = 'none';
+    document.getElementById('quizControls').classList.add('hidden');
+
+    const audioControls = document.getElementById('audioControls');
+    if (!isReverse) {
+      audioControls.classList.remove('hidden');
+    } else {
+      audioControls.classList.add('hidden');
+    }
+  }
+
+  function toggleAnswer() {
+    if (!currentWord) return;
+    isAnswerVisible = !isAnswerVisible;
+    const isReverse = document.getElementById('reverseMode').checked;
+
+    document.getElementById('quizDef').style.display = isAnswerVisible ? 'block' : 'none';
+    document.getElementById('cardState').textContent = isAnswerVisible ? (isReverse ? 'Term:' : 'Definition:') : 'Click to reveal';
+    
+    if (isAnswerVisible) {
+      document.getElementById('quizControls').classList.remove('hidden');
+      if (isReverse) document.getElementById('audioControls').classList.remove('hidden');
+    } else {
+      document.getElementById('quizControls').classList.add('hidden');
+    }
+  }
+
+  /* --- HUMAN AUDIO PRONUNCIATION ENGINE --- */
+  async function playHumanAudio(e, region) {
+    if (e) e.stopPropagation();
+    
+    // Clean word string for API lookup (e.g. remove parentheses like "stress (v)" -> "stress")
+    const cleanWord = currentWord.term.replace(/\s*\([^)]*\)/g, "").trim().toLowerCase();
+
+    try {
+      const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${cleanWord}`);
+      if (!response.ok) throw new Error("Audio not found");
+      
+      const data = await response.json();
+      let audioUrl = "";
+
+      // Look for US or UK audio in the dictionary response
+      if (data[0] && data[0].phonetics) {
+        const matchingPhonetic = data[0].phonetics.find(p => p.audio && p.audio.includes(`-${region}.mp3`)) ||
+                                 data[0].phonetics.find(p => p.audio && p.audio.length > 0);
+        if (matchingPhonetic) audioUrl = matchingPhonetic.audio;
+      }
+
+      if (audioUrl) {
+        const audio = new Audio(audioUrl);
+        audio.play();
+      } else {
+        fallbackSpeech(cleanWord, region);
+      }
+    } catch (err) {
+      // Fallback to built-in device voice if API audio is unavailable
+      fallbackSpeech(cleanWord, region);
+    }
+  }
+
+  function fallbackSpeech(text, region) {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = region === 'uk' ? 'en-GB' : 'en-US';
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  function nextCard(success) {
+    if (success) {
+      currentWord.score = (currentWord.score || 0) + 1;
+    } else {
+      currentWord.score = Math.max(0, (currentWord.score || 0) - 1);
+    }
+    saveAndRender();
+    startQuiz();
   }
 
   function switchTab(tab) {
@@ -335,51 +484,6 @@
       btns[1].classList.add('active');
       startQuiz();
     }
-  }
-
-  function startQuiz() {
-    if (words.length === 0) {
-      document.getElementById('quizTerm').textContent = "No words added yet!";
-      document.getElementById('quizDef').textContent = "Add or import words first.";
-      document.getElementById('cardState').style.display = 'none';
-      document.getElementById('quizControls').classList.add('hidden');
-      return;
-    }
-    currentWordIndex = Math.floor(Math.random() * words.length);
-    showCard();
-  }
-
-  function showCard() {
-    isAnswerVisible = false;
-    const current = words[currentWordIndex];
-    document.getElementById('cardState').style.display = 'block';
-    document.getElementById('cardState').textContent = 'Click to reveal definition';
-    document.getElementById('quizTerm').textContent = current.term;
-    document.getElementById('quizDef').textContent = current.meaning;
-    document.getElementById('quizDef').style.display = 'none';
-    document.getElementById('quizControls').classList.add('hidden');
-  }
-
-  function toggleAnswer() {
-    if (words.length === 0) return;
-    isAnswerVisible = !isAnswerVisible;
-    const defEl = document.getElementById('quizDef');
-    const stateEl = document.getElementById('cardState');
-    const controlsEl = document.getElementById('quizControls');
-
-    if (isAnswerVisible) {
-      defEl.style.display = 'block';
-      stateEl.textContent = 'Definition:';
-      controlsEl.classList.remove('hidden');
-    } else {
-      defEl.style.display = 'none';
-      stateEl.textContent = 'Click to reveal definition';
-      controlsEl.classList.add('hidden');
-    }
-  }
-
-  function nextCard(success) {
-    startQuiz();
   }
 
   renderWordList();
