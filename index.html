@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vocabulary Trainer</title>
+  <title>Vocabulary Trainer Pro</title>
   <style>
     :root {
       --bg: #0f172a;
       --card-bg: #1e293b;
       --accent: #6366f1;
+      --accent-hover: #4f46e5;
       --text: #f8fafc;
       --muted: #94a3b8;
       --success: #22c55e;
@@ -20,12 +21,16 @@
     body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; padding: 20px; }
     .container { width: 100%; max-width: 600px; }
     
-    header { text-align: center; margin-bottom: 20px; }
-    h1 { font-size: 1.8rem; margin-bottom: 6px; color: #fff; }
+    header { text-align: center; margin-bottom: 16px; }
+    h1 { font-size: 1.8rem; margin-bottom: 4px; color: #fff; }
     p.subtitle { color: var(--muted); font-size: 0.9rem; }
 
-    .nav-tabs { display: flex; gap: 10px; margin-bottom: 16px; }
-    .tab-btn { flex: 1; padding: 12px; border: none; background: var(--card-bg); color: var(--muted); font-weight: 600; cursor: pointer; border-radius: 8px; }
+    /* STREAK & BAR */
+    .stats-bar { display: flex; justify-content: space-between; background: var(--card-bg); padding: 10px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 0.9rem; font-weight: 600; border: 1px solid #334155; }
+    .streak { color: #f59e0b; }
+
+    .nav-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab-btn { flex: 1; padding: 10px 6px; border: none; background: var(--card-bg); color: var(--muted); font-size: 0.85rem; font-weight: 600; cursor: pointer; border-radius: 8px; transition: 0.2s; }
     .tab-btn.active { background: var(--accent); color: white; }
 
     .card { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin-bottom: 16px; }
@@ -33,8 +38,10 @@
     .form-group { margin-bottom: 12px; }
     label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--muted); font-weight: 600; }
     input, textarea { width: 100%; padding: 10px 12px; border: 1px solid #334155; background: #0f172a; color: white; border-radius: 8px; font-size: 0.95rem; }
+    input:focus, textarea:focus { outline: 2px solid var(--accent); }
 
-    .btn { width: 100%; padding: 12px; border: none; background: var(--accent); color: white; font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer; }
+    .btn { width: 100%; padding: 12px; border: none; background: var(--accent); color: white; font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .btn:hover { background: var(--accent-hover); }
     .btn-secondary { background: var(--secondary); margin-top: 8px; font-size: 0.9rem; }
 
     .word-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #334155; }
@@ -42,12 +49,22 @@
     .word-def { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
     .delete-btn { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; }
 
-    .quiz-card { text-align: center; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; border: 2px dashed #334155; }
+    /* FLASHCARD */
+    .quiz-card { text-align: center; min-height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; border: 2px dashed #334155; user-select: none; }
     .prompt-label { font-size: 0.8rem; color: var(--accent); text-transform: uppercase; font-weight: bold; margin-bottom: 12px; }
-    .quiz-term { font-size: 1.6rem; font-weight: bold; margin-bottom: 8px; word-break: break-word; }
-    .quiz-def { font-size: 1.05rem; color: var(--muted); display: none; margin-top: 10px; }
-    
-    .audio-btn { background: #334155; color: white; border: none; border-radius: 20px; padding: 6px 14px; font-size: 0.85rem; cursor: pointer; margin-top: 8px; }
+    .quiz-term { font-size: 1.5rem; font-weight: bold; margin-bottom: 8px; word-break: break-word; }
+    .quiz-def { font-size: 1rem; color: var(--muted); display: none; margin-top: 10px; }
+
+    /* MULTIPLE CHOICE OPTIONS */
+    .mc-options { display: grid; gap: 10px; margin-top: 14px; }
+    .mc-btn { background: #0f172a; border: 1px solid #334155; color: white; padding: 12px; border-radius: 8px; font-size: 0.95rem; cursor: pointer; text-align: left; transition: 0.2s; }
+    .mc-btn:hover { border-color: var(--accent); }
+    .mc-btn.correct-choice { background: #15803d !important; border-color: var(--success) !important; color: white; }
+    .mc-btn.wrong-choice { background: #991b1b !important; border-color: var(--danger) !important; color: white; }
+
+    /* TYPING INPUT */
+    .type-container { margin-top: 14px; }
+    .type-feedback { font-weight: bold; margin-top: 10px; text-align: center; font-size: 0.95rem; }
 
     .quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
     .btn-correct { background: var(--success); }
@@ -61,19 +78,27 @@
 <div class="container">
   <header>
     <h1>Vocabulary Trainer</h1>
-    <p class="subtitle">Flashcards & Pronunciation</p>
+    <p class="subtitle">Master Words Faster</p>
   </header>
 
+  <!-- STREAK & PROGRESS BAR -->
+  <div class="stats-bar">
+    <span class="streak">🔥 Streak: <span id="streakCount">0</span> Days</span>
+    <span>Reviewed Today: <b id="todayCount">0</b></span>
+  </div>
+
   <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('manage')">Manage Words</button>
-    <button class="tab-btn" onclick="switchTab('quiz')">Test Me!</button>
+    <button class="tab-btn active" onclick="switchTab('manage')">Manage</button>
+    <button class="tab-btn" onclick="switchTab('cards')">Flashcards</button>
+    <button class="tab-btn" onclick="switchTab('mc')">Quiz Mode</button>
+    <button class="tab-btn" onclick="switchTab('type')">Spelling</button>
   </div>
 
   <!-- MANAGE TAB -->
   <div id="manageTab">
     <div class="card">
       <div class="form-group">
-        <label for="wordInput">Add New Word</label>
+        <label for="wordInput">Add New Word / Phrase</label>
         <input type="text" id="wordInput" placeholder="e.g., Ephemeral">
       </div>
       <div class="form-group">
@@ -81,7 +106,10 @@
         <textarea id="meaningInput" rows="2" placeholder="e.g., Lasting for a short time."></textarea>
       </div>
       <button class="btn" onclick="addWord()">Add Word</button>
-      <button class="btn btn-secondary" style="background: #991b1b; color: #fecaca;" onclick="resetToDefault()">🔄 Reset to 80+ Default Words</button>
+
+      <div style="margin-top: 16px; border-top: 1px solid #334155; padding-top: 12px;">
+        <button class="btn btn-secondary" style="background: #991b1b; color: #fecaca;" onclick="resetToDefault()">🔄 Reset List</button>
+      </div>
     </div>
 
     <div class="card">
@@ -94,24 +122,45 @@
     </div>
   </div>
 
-  <!-- QUIZ TAB -->
-  <div id="quizTab" class="hidden">
+  <!-- 1. FLASHCARDS TAB -->
+  <div id="cardsTab" class="hidden">
     <div class="card">
-      <div id="quizContainer">
-        <div class="card quiz-card" onclick="toggleAnswer()">
-          <span class="prompt-label" id="cardState">Click to reveal definition</span>
-          <div class="quiz-term" id="quizTerm">No words added yet!</div>
-          <button class="audio-btn" id="speakBtn" onclick="speakTerm(event)">🔊 Listen</button>
-          <div class="quiz-def" id="quizDef">Add words first.</div>
-        </div>
-
-        <div class="quiz-actions hidden" id="quizControls">
-          <button class="btn btn-wrong" onclick="nextCard(false)">Needs Practice ❌</button>
-          <button class="btn btn-correct" onclick="nextCard(true)">Got it! ✅</button>
-        </div>
+      <div class="card quiz-card" onclick="toggleAnswer()">
+        <span class="prompt-label" id="cardState">Click to reveal definition</span>
+        <div class="quiz-term" id="cardTerm">...</div>
+        <div class="quiz-def" id="cardDef">...</div>
+      </div>
+      <div class="quiz-actions hidden" id="cardControls">
+        <button class="btn btn-wrong" onclick="nextCard(false)">Needs Practice ❌</button>
+        <button class="btn btn-correct" onclick="nextCard(true)">Got it! ✅</button>
       </div>
     </div>
   </div>
+
+  <!-- 2. MULTIPLE CHOICE TAB -->
+  <div id="mcTab" class="hidden">
+    <div class="card">
+      <span class="prompt-label">Select the correct definition:</span>
+      <div class="quiz-term" id="mcTerm" style="margin-top:8px;">...</div>
+      <div class="mc-options" id="mcOptions"></div>
+      <button class="btn btn-secondary hidden" id="mcNextBtn" onclick="startMCQuiz()">Next Word ➔</button>
+    </div>
+  </div>
+
+  <!-- 3. SPELLING / TYPING TAB -->
+  <div id="typeTab" class="hidden">
+    <div class="card">
+      <span class="prompt-label">Type the matching term:</span>
+      <div class="word-def" id="typeDef" style="font-size:1.1rem; color:white; margin: 12px 0;">...</div>
+      <div class="type-container">
+        <input type="text" id="typeInput" placeholder="Type word here..." autocomplete="off">
+        <button class="btn" style="margin-top:10px;" onclick="checkTypeAnswer()">Check Answer</button>
+      </div>
+      <div class="type-feedback" id="typeFeedback"></div>
+      <button class="btn btn-secondary hidden" id="typeNextBtn" onclick="startTypeQuiz()">Next Word ➔</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -125,123 +174,86 @@
     {"id":7,"term":"evoke","meaning":"provoke(reactions)"},
     {"id":8,"term":"trope","meaning":"topics, concerns"},
     {"id":9,"term":"indistinguishable","meaning":"similar"},
-    {"id":10,"term":"replicant","meaning":"humanoid, clone"},
-    {"id":11,"term":"vivid","meaning":"bright"},
-    {"id":12,"term":"brute","meaning":"violent, rough, relentless, cruel"},
-    {"id":13,"term":"entity","meaning":"being, body"},
-    {"id":14,"term":"sentient","meaning":"able to experience within (emotions, senses)"},
-    {"id":15,"term":"valid","meaning":"correct, sound"},
-    {"id":16,"term":"disruptive(innovation)","meaning":"major change/tool that enters many parts of life"},
-    {"id":17,"term":"incremental (innovation)","meaning":"small innovation"},
-    {"id":18,"term":"benchmark","meaning":"standard/point of reference"},
-    {"id":19,"term":"discern","meaning":"differentiate"},
-    {"id":20,"term":"threshold","meaning":"limit/tolerance level"},
-    {"id":21,"term":"recapitulate","meaning":"conclude, summarize"},
-    {"id":22,"term":"ethos","meaning":"core moral beliefs, moral compass"},
-    {"id":23,"term":"pioneer","meaning":"creator (the first)"},
-    {"id":24,"term":"prowess","meaning":"great skill"},
-    {"id":25,"term":"innate","meaning":"natural, inborn, inherent"},
-    {"id":26,"term":"embody","meaning":"represent, personify"},
-    {"id":27,"term":"perpetuate","meaning":"cause to continue, maintain"},
-    {"id":28,"term":"hallmark","meaning":"typical feature, stamp"},
-    {"id":29,"term":"hub","meaning":"center"},
-    {"id":30,"term":"relentless","meaning":"non-stop"},
-    {"id":31,"term":"complacent","meaning":"getting too comfortable(negative)"},
-    {"id":32,"term":"strife","meaning":"struggle, suffering"},
-    {"id":33,"term":"municipal","meaning":"local government"},
-    {"id":34,"term":"accelerate","meaning":"speed up, quicken"},
-    {"id":35,"term":"compact","meaning":"small (but in a good way)"},
-    {"id":36,"term":"densely populated","meaning":"lots of people per square km"},
-    {"id":37,"term":"sprawling","meaning":"expanding in terms of size"},
-    {"id":38,"term":"duplicate","meaning":"copy"},
-    {"id":39,"term":"slum","meaning":"poor neighbourhood"},
-    {"id":40,"term":"spread","meaning":"proliferation"},
-    {"id":41,"term":"surplus","meaning":"abundance"},
-    {"id":42,"term":"staff","meaning":"personnel"},
-    {"id":43,"term":"enclosed","meaning":"fenced"},
-    {"id":44,"term":"ties","meaning":"bond, links, connections, network"},
-    {"id":45,"term":"harshness","meaning":"severity"},
-    {"id":46,"term":"fertile","meaning":"productive"},
-    {"id":47,"term":"famine","meaning":"extreme hunger"},
-    {"id":48,"term":"elaborate (adj)","meaning":"complex, sophisticated, detailed"},
-    {"id":49,"term":"elaborate (v)","meaning":"expand, clarify"},
-    {"id":50,"term":"subsistence","meaning":"survival level resources"},
-    {"id":51,"term":"fragile","meaning":"weak, easy to break"},
-    {"id":52,"term":"comprehensive","meaning":"detailed, clear"},
-    {"id":53,"term":"bureaucracy","meaning":"paperwork, legislation"},
-    {"id":54,"term":"wary","meaning":"careful"},
-    {"id":55,"term":"encompass","meaning":"include"},
-    {"id":56,"term":"urge","meaning":"desire, push"},
-    {"id":57,"term":"qualitative","meaning":"study based on qualities"},
-    {"id":58,"term":"quantitative","meaning":"study based on numbers"},
-    {"id":59,"term":"fad","meaning":"short-lived trend"},
-    {"id":60,"term":"beholden","meaning":"favor for a favor"},
-    {"id":61,"term":"stress (v)","meaning":"highlight, emphasize"},
-    {"id":62,"term":"leverage","meaning":"benefit"},
-    {"id":63,"term":"ponder","meaning":"think deeply"},
-    {"id":64,"term":"envisage","meaning":"imagine"},
-    {"id":65,"term":"elevation","meaning":"rise, growth"},
-    {"id":66,"term":"dicipline(N)","meaning":"subject"},
-    {"id":67,"term":"intrinsic","meaning":"internal, inner"},
-    {"id":68,"term":"mobilize","meaning":"equip with, empower, enable"},
-    {"id":69,"term":"tedious","meaning":"boring, daunting"},
-    {"id":70,"term":"scholarly","meaning":"scientific, academic"},
-    {"id":71,"term":"pre-eminently","meaning":"predominantly"},
-    {"id":72,"term":"pre-eminent","meaning":"superior"},
-    {"id":73,"term":"subject matter","meaning":"topic(what is being discussed)"},
-    {"id":74,"term":"apt","meaning":"suitable for"},
-    {"id":75,"term":"inquiry","meaning":"request, search for information"},
-    {"id":76,"term":"protagonist","meaning":"main character(usually a good one)"},
-    {"id":77,"term":"antagonist","meaning":"main character (usually a bad one)"},
-    {"id":78,"term":"collapse","meaning":"fall"},
-    {"id":79,"term":"echo(V)","meaning":"resonate, relate"},
-    {"id":80,"term":"deference","meaning":"respect, obedience"},
-    {"id":81,"term":"disenchantment","meaning":"frustration, disappointment"},
-    {"id":82,"term":"memorabilia","meaning":"tools kept from the past"},
-    {"id":83,"term":"left","meaning":"liberal"},
-    {"id":84,"term":"right","meaning":"conservative"},
-    {"id":85,"term":"emblem","meaning":"symbol, representation, testament"},
-    {"id":86,"term":"folk","meaning":"traditional"},
-    {"id":87,"term":"dignity","meaning":"honor"},
-    {"id":88,"term":"impetus","meaning":"driving factor, force"},
-    {"id":89,"term":"amass","meaning":"collecting, gathering"},
-    {"id":90,"term":"indulgence","meaning":"letting yourself do what's enjoyable"},
-    {"id":91,"term":"flatter","meaning":"giving compliments in a fake way"},
-    {"id":92,"term":"benevolence","meaning":"mercy, kindness"},
-    {"id":93,"term":"eccentric","meaning":"weird, strange, unusual"},
-    {"id":94,"term":"subversive","meaning":"used to overthrow the current regime"},
-    {"id":95,"term":"condescension","meaning":"arrogant, patronizing"},
-    {"id":96,"term":"hindsight","meaning":"realization of the past"},
-    {"id":97,"term":"scrutinize","meaning":"analyse, investigate"}
+    {"id":10,"term":"vivid","meaning":"bright"},
+    {"id":11,"term":"brute","meaning":"violent, rough, relentless, cruel"},
+    {"id":12,"term":"sentient","meaning":"able to experience emotions/senses"},
+    {"id":13,"term":"benchmark","meaning":"standard/point of reference"},
+    {"id":14,"term":"discern","meaning":"differentiate"},
+    {"id":15,"term":"ethos","meaning":"core moral beliefs"},
+    {"id":16,"term":"prowess","meaning":"great skill"},
+    {"id":17,"term":"innate","meaning":"natural, inborn"},
+    {"id":18,"term":"perpetuate","meaning":"cause to continue"},
+    {"id":19,"term":"relentless","meaning":"non-stop"},
+    {"id":20,"term":"strife","meaning":"struggle, suffering"},
+    {"id":21,"term":"accelerate","meaning":"speed up"},
+    {"id":22,"term":"famine","meaning":"extreme hunger"},
+    {"id":23,"term":"fragile","meaning":"weak, easy to break"},
+    {"id":24,"term":"bureaucracy","meaning":"paperwork, legislation"},
+    {"id":25,"term":"wary","meaning":"careful"},
+    {"id":26,"term":"ponder","meaning":"think deeply"},
+    {"id":27,"term":"tedious","meaning":"boring, daunting"},
+    {"id":28,"term":"dignity","meaning":"honor"},
+    {"id":29,"term":"benevolence","meaning":"mercy, kindness"},
+    {"id":30,"term":"scrutinize","meaning":"analyse, investigate"}
   ];
 
-  let words = JSON.parse(localStorage.getItem('vocab_final')) || defaultWords;
+  let words = JSON.parse(localStorage.getItem('vocab_v5_words')) || defaultWords;
+  let stats = JSON.parse(localStorage.getItem('vocab_v5_stats')) || { streak: 0, lastDate: '', todayCount: 0 };
   let currentWord = null;
 
-  function save() {
-    localStorage.setItem('vocab_final', JSON.stringify(words));
+  // STREAK LOGIC
+  function checkStreak() {
+    const today = new Date().toISOString().split('T')[0];
+    if (stats.lastDate !== today) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+      if (stats.lastDate !== yesterdayStr) {
+        stats.streak = 0; // Missed a day
+      }
+      stats.todayCount = 0; // Reset daily count
+    }
+    document.getElementById('streakCount').textContent = stats.streak;
+    document.getElementById('todayCount').textContent = stats.todayCount;
+  }
+
+  function incrementReview() {
+    const today = new Date().toISOString().split('T')[0];
+    if (stats.lastDate !== today) {
+      stats.streak += 1;
+      stats.lastDate = today;
+    }
+    stats.todayCount += 1;
+    localStorage.setItem('vocab_v5_stats', JSON.stringify(stats));
+    checkStreak();
+  }
+
+  function saveAndRender() {
+    localStorage.setItem('vocab_v5_words', JSON.stringify(words));
     renderWordList();
   }
 
   function addWord() {
     const term = document.getElementById('wordInput').value.trim();
     const meaning = document.getElementById('meaningInput').value.trim();
-    if (!term || !meaning) return alert("Enter both word and meaning");
+    if (!term || !meaning) return alert("Fill in both fields!");
     words.push({ id: Date.now(), term, meaning });
     document.getElementById('wordInput').value = '';
     document.getElementById('meaningInput').value = '';
-    save();
+    saveAndRender();
   }
 
   function deleteWord(id) {
     words = words.filter(w => w.id !== id);
-    save();
+    saveAndRender();
   }
 
   function resetToDefault() {
-    words = [...defaultWords];
-    save();
-    alert("Reset back to 80+ default words!");
+    if (confirm("Reset to default words?")) {
+      words = [...defaultWords];
+      saveAndRender();
+    }
   }
 
   function renderWordList() {
@@ -251,7 +263,7 @@
     document.getElementById('wordCount').textContent = words.length;
 
     if (filtered.length === 0) {
-      listEl.innerHTML = '<p style="color:var(--muted); text-align:center; padding:10px;">No words found</p>';
+      listEl.innerHTML = '<p style="color:var(--muted); text-align:center; padding:10px;">No words found.</p>';
       return;
     }
 
@@ -266,48 +278,118 @@
     `).join('');
   }
 
-  function startQuiz() {
+  /* 1. FLASHCARD MODE */
+  function startCards() {
     if (words.length === 0) return;
     currentWord = words[Math.floor(Math.random() * words.length)];
     document.getElementById('cardState').textContent = 'Click to reveal definition';
-    document.getElementById('quizTerm').textContent = currentWord.term;
-    document.getElementById('quizDef').textContent = currentWord.meaning;
-    document.getElementById('quizDef').style.display = 'none';
-    document.getElementById('quizControls').classList.add('hidden');
+    document.getElementById('cardTerm').textContent = currentWord.term;
+    document.getElementById('cardDef').textContent = currentWord.meaning;
+    document.getElementById('cardDef').style.display = 'none';
+    document.getElementById('cardControls').classList.add('hidden');
   }
 
   function toggleAnswer() {
     if (!currentWord) return;
-    const defEl = document.getElementById('quizDef');
+    const defEl = document.getElementById('cardDef');
     const isHidden = defEl.style.display === 'none';
     defEl.style.display = isHidden ? 'block' : 'none';
-    document.getElementById('cardState').textContent = isHidden ? 'Definition:' : 'Click to reveal definition';
-    document.getElementById('quizControls').classList.toggle('hidden', !isHidden);
+    document.getElementById('cardState').textContent = isHidden ? 'Definition:' : 'Click to reveal';
+    document.getElementById('cardControls').classList.toggle('hidden', !isHidden);
   }
 
-  function speakTerm(e) {
-    e.stopPropagation();
-    if ('speechSynthesis' in window && currentWord) {
-      const text = currentWord.term.replace(/\s*\([^)]*\)/g, "");
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      window.speechSynthesis.speak(utterance);
+  function nextCard(success) {
+    if (success) incrementReview();
+    startCards();
+  }
+
+  /* 2. MULTIPLE CHOICE QUIZ MODE */
+  function startMCQuiz() {
+    if (words.length < 4) return alert("You need at least 4 words for multiple choice quiz!");
+    document.getElementById('mcNextBtn').classList.add('hidden');
+    currentWord = words[Math.floor(Math.random() * words.length)];
+    document.getElementById('mcTerm').textContent = currentWord.term;
+
+    // Grab 3 wrong options randomly
+    let wrongPool = words.filter(w => w.id !== currentWord.id);
+    wrongPool.sort(() => 0.5 - Math.random());
+    let choices = [currentWord, wrongPool[0], wrongPool[1], wrongPool[2]];
+    choices.sort(() => 0.5 - Math.random());
+
+    const optionsContainer = document.getElementById('mcOptions');
+    optionsContainer.innerHTML = choices.map(c => `
+      <button class="mc-btn" onclick="checkMCOption(this, ${c.id === currentWord.id})">${c.meaning}</button>
+    `).join('');
+  }
+
+  function checkMCOption(btn, isCorrect) {
+    const allBtns = document.querySelectorAll('.mc-btn');
+    allBtns.forEach(b => b.disabled = true);
+
+    if (isCorrect) {
+      btn.classList.add('correct-choice');
+      incrementReview();
+    } else {
+      btn.classList.add('wrong-choice');
+    }
+    document.getElementById('mcNextBtn').classList.remove('hidden');
+  }
+
+  /* 3. SPELLING / TYPING MODE */
+  function startTypeQuiz() {
+    if (words.length === 0) return;
+    document.getElementById('typeNextBtn').classList.add('hidden');
+    document.getElementById('typeFeedback').textContent = '';
+    document.getElementById('typeInput').value = '';
+    document.getElementById('typeInput').disabled = false;
+
+    currentWord = words[Math.floor(Math.random() * words.length)];
+    document.getElementById('typeDef').textContent = currentWord.meaning;
+  }
+
+  function checkTypeAnswer() {
+    const input = document.getElementById('typeInput').value.trim().toLowerCase();
+    const cleanTarget = currentWord.term.replace(/\s*\([^)]*\)/g, "").trim().toLowerCase();
+    const feedback = document.getElementById('typeFeedback');
+
+    if (input === cleanTarget) {
+      feedback.textContent = "Correct! 🎉";
+      feedback.style.color = "var(--success)";
+      document.getElementById('typeInput').disabled = true;
+      document.getElementById('typeNextBtn').classList.remove('hidden');
+      incrementReview();
+    } else {
+      feedback.textContent = `Not quite! Answer is: "${cleanTarget}"`;
+      feedback.style.color = "var(--danger)";
+      document.getElementById('typeNextBtn').classList.remove('hidden');
     }
   }
 
-  function nextCard() {
-    startQuiz();
-  }
-
+  /* TAB SWITCHER */
   function switchTab(tab) {
-    document.getElementById('manageTab').classList.toggle('hidden', tab !== 'manage');
-    document.getElementById('quizTab').classList.toggle('hidden', tab !== 'quiz');
+    ['manageTab', 'cardsTab', 'mcTab', 'typeTab'].forEach(t => document.getElementById(t).classList.add('hidden'));
     const btns = document.querySelectorAll('.tab-btn');
-    btns[0].classList.toggle('active', tab === 'manage');
-    btns[1].classList.toggle('active', tab === 'quiz');
-    if (tab === 'quiz') startQuiz();
+    btns.forEach(b => b.classList.remove('active'));
+
+    if (tab === 'manage') {
+      document.getElementById('manageTab').classList.remove('hidden');
+      btns[0].classList.add('active');
+    } else if (tab === 'cards') {
+      document.getElementById('cardsTab').classList.remove('hidden');
+      btns[1].classList.add('active');
+      startCards();
+    } else if (tab === 'mc') {
+      document.getElementById('mcTab').classList.remove('hidden');
+      btns[2].classList.add('active');
+      startMCQuiz();
+    } else if (tab === 'type') {
+      document.getElementById('typeTab').classList.remove('hidden');
+      btns[3].classList.add('active');
+      startTypeQuiz();
+    }
   }
 
+  checkStreak();
   renderWordList();
 </script>
 </body>
