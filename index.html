@@ -120,7 +120,7 @@
       <button class="btn" onclick="addWord()">Add Word</button>
 
       <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
-        <button class="btn btn-secondary" style="border-color: #7f1d1d; color: #fca5a5;" onclick="resetToDefault()">🔄 Reset to 97 Core Words</button>
+        <button class="btn btn-secondary" style="border-color: #7f1d1d; color: #fca5a5;" onclick="resetToDefault()">🔄 Reset to Core Words List</button>
       </div>
     </div>
 
@@ -176,7 +176,7 @@
 </div>
 
 <script>
-  // Complete 97 Core Words Array
+  // Complete 102 Core Words Array
   const defaultWords = [
     {"id":1,"term":"resonate","meaning":"relate, match, echo"},
     {"id":2,"term":"fiction","meaning":"fake, product of imagination"},
@@ -274,12 +274,12 @@
     {"id":94,"term":"subversive","meaning":"used to overthrow the current regime"},
     {"id":95,"term":"condescension","meaning":"arrogant, patronizing"},
     {"id":96,"term":"hindsight","meaning":"realization of the past"},
-    {"id":97,"term":"scrutinize","meaning":"analyse, investigate"}
-    {"id": 98, "term": "breed", "meaning": "a particular group of people"}
-    {"id":99,"term":"porous","meaning":"easy to cross"}
-    {"id":100"term":"drain","meaning":"a pipe or channel that takes waste water"}
-    {"id":101,"term":"drainage","meaning":"removal of waste water or liquid"}
-    {"id":102,"term":"ship (V)","meaning":"send"} 
+    {"id":97,"term":"scrutinize","meaning":"analyse, investigate"},
+    {"id":98,"term":"breed","meaning":"a particular group of people"},
+    {"id":99,"term":"porous","meaning":"easy to cross"},
+    {"id":100,"term":"drainage","meaning":"removal of waste water or liquid"},
+    {"id":101,"term":"drain","meaning":"a pipe or channel that takes waste water"},
+    {"id":102,"term":"ship (V)","meaning":"send"}
   ];
 
   let words = JSON.parse(localStorage.getItem('lexicon_words')) || defaultWords;
@@ -334,7 +334,7 @@
   }
 
   function resetToDefault() {
-    if (confirm("Reset to full 97 word default list?")) {
+    if (confirm("Reset to full word list?")) {
       words = [...defaultWords];
       saveAndRender();
     }
